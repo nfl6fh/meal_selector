@@ -20,17 +20,23 @@ def scrape(website : str) -> dict:
     print(f'Status code: {r.status_code}')
 
     recipe_name = get_recipe_name(r.text)
-    print(recipe_name)
+    # print(recipe_name)
 
     recipe = {'name': recipe_name, 'website': website}
 
-    start = re.search(r'Prep Time:</div>\n<div class="mntl-recipe-details__value">', r.text).end()
-    prep_time = r.text[start:start+re.search(r'</div>\n</div>', r.text[start:]).start()]
+    try:
+        start = re.search(r'Prep Time:</div>\n<div class="mntl-recipe-details__value">', r.text).end()
+        prep_time = r.text[start:start+re.search(r'</div>\n</div>', r.text[start:]).start()]
+    except AttributeError:
+        prep_time = 'None'
 
     prep_time = parse_to_hours(prep_time)
 
-    start = re.search(r'Cook Time:</div>\n<div class="mntl-recipe-details__value">', r.text).end()
-    cook_time = r.text[start:start+re.search(r'</div>\n</div>', r.text[start:]).start()].strip()
+    try:
+        start = re.search(r'Cook Time:</div>\n<div class="mntl-recipe-details__value">', r.text).end()
+        cook_time = r.text[start:start+re.search(r'</div>\n</div>', r.text[start:]).start()].strip()
+    except AttributeError:
+        cook_time = 'None'
 
     cook_time = parse_to_hours(cook_time)
 
@@ -41,14 +47,12 @@ def scrape(website : str) -> dict:
     nutrition_facts = get_nutrition_facts(r.text)
     for key, value in nutrition_facts.items():
         recipe[key] = value
-    print(nutrition_facts)
+    # print(nutrition_facts)
     ingredients = get_ingredients(r.text)
     if ingredients:
-        for ingredient in ingredients:
-            print(f'{ingredient["quantity"]} {ingredient["unit"]} {ingredient["name"]}')
+        # for ingredient in ingredients:
+            # print(f'{ingredient["quantity"]} {ingredient["unit"]} {ingredient["name"]}')
         recipe['ingredients'] = ingredients
-    else:
-        print('No ingredients found')
     return recipe
 
 def parse_to_hours(time_str):
