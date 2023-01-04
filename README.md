@@ -2,7 +2,7 @@
 
 A simple meal selector for the command line.
 
-When given calories and macros as input, it will return a list of meals that fit those macros. This is currently a work in progress, and is not yet complete. It will begin as a command line tool and eventually be turned into a web app.
+When given calories and macros as input, it will return a list of meals that fit those macros. This is currently a work in progress, and is not yet complete. It will begin as a command line tool and eventually be turned into a web app. When I do turn this into a web app, I will also connect it to a database of meals instead of having the db within the repo.
 
 ## How to run
 
