@@ -24,6 +24,19 @@ def scrape(website : str) -> dict:
 
     recipe = {'name': recipe_name, 'website': website}
 
+    start = re.search(r'Prep Time:</div>\n<div class="mntl-recipe-details__value">', r.text).end()
+    prep_time = r.text[start:start+re.search(r'</div>\n</div>', r.text[start:]).start()]
+
+    prep_time = parse_to_hours(prep_time)
+
+    start = re.search(r'Cook Time:</div>\n<div class="mntl-recipe-details__value">', r.text).end()
+    cook_time = r.text[start:start+re.search(r'</div>\n</div>', r.text[start:]).start()].strip()
+
+    cook_time = parse_to_hours(cook_time)
+
+    recipe['prep_time'] = prep_time
+    recipe['cook_time'] = cook_time
+
     # get the nutrition facts from the response
     nutrition_facts = get_nutrition_facts(r.text)
     for key, value in nutrition_facts.items():
@@ -37,6 +50,26 @@ def scrape(website : str) -> dict:
     else:
         print('No ingredients found')
     return recipe
+
+def parse_to_hours(time_str):
+    time_str = time_str.lower()
+    if time_str == 'None':
+        return 0
+    if re.search(r'hour', time_str):
+        hours = int(re.search(r'\d+', time_str).group())
+        time_str = time_str[re.search(r'hour', time_str).end():]
+    elif re.search(r'hr', time_str):
+        hours = int(re.search(r'\d+', time_str).group())
+        time_str = time_str[re.search(r'hr', time_str).end():]
+    else:
+        hours = 0
+    if re.search(r'minute', time_str):
+        minutes = int(re.search(r'\d+', time_str[:re.search(r'minute', time_str).start():]).group())
+    elif re.search(r'min', time_str):
+        minutes = int(re.search(r'\d+', time_str[:re.search(r'min', time_str).start()]).group())
+    else:
+        minutes = 0
+    return hours + minutes / 60
 
 def get_recipe_name(response_text : str) -> str:
     return response_text[re.search(r'article-heading mntl-text-block">\n', response_text).end():re.search(r'</h1>', response_text).start()]
