@@ -11,7 +11,7 @@ def main():
 
     print(scrape(website))
 
-def scrape(website):
+def scrape(website : str) -> dict:
     r = requests.get(website)
     if r.status_code != 200:
         print("Error: could not connect to website")
@@ -38,10 +38,10 @@ def scrape(website):
         print('No ingredients found')
     return recipe
 
-def get_recipe_name(response_text):
+def get_recipe_name(response_text : str) -> str:
     return response_text[re.search(r'article-heading mntl-text-block">\n', response_text).end():re.search(r'</h1>', response_text).start()]
 
-def get_ingredients(response_text):
+def get_ingredients(response_text : str) -> list:
     ing_match = re.search(r'.mntl-structured-ingredients__list', response_text).start(), re.search(r'<!-- end: comp mntl-structured-ingredients -->', response_text).end()
     matches = []
     match_inds = []
@@ -65,7 +65,7 @@ def get_ingredients(response_text):
             curr_ind = match_inds[-1]['end']
     return matches
 
-def get_nutrition_facts(response_text):
+def get_nutrition_facts(response_text : str) -> dict:
     ind_servings = re.search(r'ervings Per Recipe</span>\n<span>', response_text).end()
     ind_cal = re.search(r'Calories</span>\n<span>', response_text).end()
     ind_fat = re.search(r'Total Fat</span>\n', response_text).end()
