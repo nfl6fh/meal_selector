@@ -101,15 +101,24 @@ def get_ingredients(response_text : str) -> list:
 def get_nutrition_facts(response_text : str) -> dict:
     ind_servings = re.search(r'ervings Per Recipe</span>\n<span>', response_text).end()
     ind_cal = re.search(r'Calories</span>\n<span>', response_text).end()
-    ind_fat = re.search(r'Total Fat</span>\n', response_text).end()
-    ind_carb = re.search(r'Total Carbohydrate</span>\n', response_text).end()
-    ind_prot = re.search(r'Protein</span>\n', response_text).end()
+    try:
+        ind_fat = re.search(r'Total Fat</span>\n', response_text).end()
+        fat = response_text[ind_fat:ind_fat+re.search(r'\d*', response_text[ind_fat:]).end()]
+    except AttributeError:
+        fat = '0'
+    try:
+        ind_carb = re.search(r'Total Carbohydrate</span>\n', response_text).end()
+        carb = response_text[ind_carb:ind_carb+re.search(r'\d*', response_text[ind_carb:]).end()]
+    except AttributeError:
+        carb = '0'
+    try:
+        ind_prot = re.search(r'Protein</span>\n', response_text).end()
+        prot = response_text[ind_prot:ind_prot+re.search(r'\d*', response_text[ind_prot:]).end()]
+    except AttributeError:
+        prot = '0'
 
     servings = response_text[ind_servings:ind_servings+re.search(r'\d*', response_text[ind_servings:]).end()]
     calories = response_text[ind_cal:ind_cal+re.search(r'\d*', response_text[ind_cal:]).end()]
-    fat = response_text[ind_fat:ind_fat+re.search(r'\d*', response_text[ind_fat:]).end()]
-    carb = response_text[ind_carb:ind_carb+re.search(r'\d*', response_text[ind_carb:]).end()]
-    prot = response_text[ind_prot:ind_prot+re.search(r'\d*', response_text[ind_prot:]).end()]
 
     return {'servings': servings, 'calories': calories, 'fat': fat, 'carbs': carb, 'protein': prot}
 
