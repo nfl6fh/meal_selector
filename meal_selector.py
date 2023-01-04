@@ -103,11 +103,17 @@ def main():
                 ingredients = recipes[choice-1][10][1:-1]
                 ingredients = ingredients.split('}, {')
 
+                prep_time = hours_to_formatted(recipes[choice-1][4])
+                print(f'Prep time: {prep_time}')
+
+                cook_time = hours_to_formatted(recipes[choice-1][5])
+                print(f'Cook time: {cook_time}')
+
                 # convert the ingredients to a list of string from format {'quantity': '1', 'unit': 'cup', 'name': 'chicken broth'}
                 for i, ingredient in enumerate(ingredients):
                     # strip leading and trailing {}
                     ingredient = ingredient.strip('{}')
-                    print(ingredient)
+                    # print(ingredient)
                     curr_str = ingredient[re.search(r'\'quantity\': \'', ingredient).end():re.search(r', \'unit\':', ingredient).start()-1]
                     curr_str += ' '
                     curr_str += ingredient[re.search(r', \'unit\': \'', ingredient).end():re.search(r', \'name\':', ingredient).start()-1]
@@ -125,10 +131,15 @@ def main():
                 print('Instructions:')
                 for i, instruction in enumerate(instructions):
                     print(f'\t{i+1}. {instruction}')
-                break
         except ValueError:
             print('Please enter a number')
 
+
+def hours_to_formatted(hours : float) -> str:
+    """Converts hours to a formatted string of hours and minutes"""
+    hours_int = int(hours)
+    minutes = int((hours - hours_int) * 60)
+    return f'{f"{hours_int} hours" if hours_int > 0 else ""}{" and " if hours_int > 0 and minutes > 0 else ""}{f"{minutes} minutes" if minutes > 0 else ""}'
 
 if __name__ == '__main__':
     main()
